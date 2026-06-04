@@ -1,0 +1,35 @@
+{
+  "extensions": {
+    "recommendations": [
+      "BazelBuild.vscode-bazel",
+      "rust-lang.rust-analyzer"
+    ]
+  },
+  "folders": [
+    {
+      "name": "fastverk (meta)",
+      "path": "."
+    },
+    {
+      "name": "app",
+      "path": "repos/app"
+    },
+    {
+      "name": "bazel-registry",
+      "path": "repos/bazel-registry"
+    },
+    {
+      "name": "core",
+      "path": "repos/core"
+    },
+    {
+      "name": "rules_uv",
+      "path": "repos/rules_uv"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/bazel-*": true
+    }
+  }
+}

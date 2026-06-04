@@ -1,0 +1,47 @@
+{
+  "extensions": {
+    "recommendations": [
+      "BazelBuild.vscode-bazel",
+      "rust-lang.rust-analyzer"
+    ]
+  },
+  "folders": [
+    {
+      "name": "acme",
+      "path": "acme"
+    },
+    {
+      "name": "lib",
+      "path": "acme/lib"
+    },
+    {
+      "name": "services",
+      "path": "acme/services"
+    },
+    {
+      "name": "fastverk (meta)",
+      "path": "fastverk"
+    },
+    {
+      "name": "app",
+      "path": "fastverk/repos/app"
+    },
+    {
+      "name": "bazel-registry",
+      "path": "fastverk/repos/bazel-registry"
+    },
+    {
+      "name": "core",
+      "path": "fastverk/repos/core"
+    },
+    {
+      "name": "rules_uv",
+      "path": "fastverk/repos/rules_uv"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/bazel-*": true
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# Bazel-idiomatic, deterministic generation of VSCode .code-workspace / settings.json (aspect-driven workspace assembly + merge) for fastverk org-roots
+module(
+    name = "rules_vscode",
+    version = "0.0.1",
+)
+
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "bazel_skylib", version = "1.8.2")
+
+# write_source_files — the `bazel run //:<name>.update` write-back + the
+# bazel-test up-to-date check in one target. 2.22.5 matches the
+# ecosystem-wide pin (fastverk, rules_lang, …).
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
+
+# Dev-only.
+bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
+bazel_dep(name = "stardoc", version = "0.7.2", dev_dependency = True)
+
+# rules_jsonschema pins the VSCode `.code-workspace` / `settings.json` JSON
+# Schemas (the schema layer is the source of truth) and validates the emitted
+# artifacts against them. See //schema.
+bazel_dep(name = "rules_jsonschema", version = "0.3.0", dev_dependency = True)

@@ -1,0 +1,33 @@
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("@rules_jsonschema//starlark:defs.bzl", "jsonschema_starlark_codegen")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "code-workspace.schema.json",
+    "settings.schema.json",
+])
+
+# The pinned VSCode `.code-workspace` schema is the source of truth for the
+# emitted document structure. rules_jsonschema generates a typed Starlark
+# layer from it; the diff_test gates drift (re-run `bazel run //schema:update`
+# after editing the schema).
+jsonschema_starlark_codegen(
+    name = "code_workspace_codegen",
+    kinds = [
+        ("folder", "#/$defs/folder", "vscode_folder_shard", "VscodeFolderShardInfo"),
+    ],
+    schema = "code-workspace.schema.json",
+)
+
+diff_test(
+    name = "code_workspace_schema_up_to_date",
+    file1 = "code_workspace.bzl",
+    file2 = ":code_workspace_codegen",
+)
+
+write_source_files(
+    name = "update",
+    files = {"code_workspace.bzl": ":code_workspace_codegen"},
+)

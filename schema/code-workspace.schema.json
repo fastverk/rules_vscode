@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "code-workspace.schema.json",
+  "title": "CodeWorkspace",
+  "description": "The subset of the VSCode multi-root `.code-workspace` document that rules_vscode emits. This pinned schema is the source of truth for the generated structure; VSCode itself accepts a superset (launch/tasks/remoteAuthority/…).",
+  "type": "object",
+  "properties": {
+    "folders": {
+      "type": "array",
+      "description": "Workspace folders, in canonical order (root `.` first).",
+      "items": {"$ref": "#/$defs/folder"}
+    },
+    "settings": {
+      "type": "object",
+      "description": "Workspace `settings` block (free-form VSCode settings).",
+      "additionalProperties": true
+    },
+    "extensions": {"$ref": "#/$defs/extensions"}
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "folder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {"type": "string", "description": "Workspace-relative folder path (`.` for the root)."},
+        "name": {"type": "string", "description": "Display name shown in the VSCode explorer."}
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommendations": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Recommended extension ids."
+        },
+        "unwantedRecommendations": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("//vscode:defs.bzl", "vscode_folder", "vscode_settings", "vscode_workspace", "vscode_workspace_merge")
+
+package(default_visibility = ["//visibility:public"])
+
+# A standalone settings.json.
+vscode_settings(
+    name = "settings",
+    out = "settings.json",
+    settings = {
+        "editor.formatOnSave": True,
+        "files.exclude": {
+            "**/bazel-*": True,
+            "**/target": True,
+        },
+    },
+)
+
+# Folder contributions assembled through the graph (app -> core).
+vscode_folder(
+    name = "core_folder",
+    display_name = "core",
+    extensions = ["rust-lang.rust-analyzer"],
+    path = "repos/core",
+)
+
+vscode_folder(
+    name = "app_folder",
+    display_name = "app",
+    path = "repos/app",
+    deps = [":core_folder"],
+)
+
+# A per-org workspace: explicit folders + graph-assembled folder_deps.
+vscode_workspace(
+    name = "fastverk_ws",
+    out = "fastverk.code-workspace",
+    extensions = ["BazelBuild.vscode-bazel"],
+    folder_deps = [":app_folder"],
+    folders = {
+        "repos/bazel-registry": "bazel-registry",
+        "repos/rules_uv": "rules_uv",
+    },
+    root_label = "fastverk (meta)",
+    settings = {"files.exclude": {"**/bazel-*": True}},
+    # Demonstrates the generator UX: `bazel run //examples:fastverk_ws.update`
+    # writes the file back into the source tree (here, the committed golden),
+    # and `bazel test //examples:fastverk_ws.update` checks it is current.
+    write_to = "golden/fastverk.code-workspace",
+)
+
+vscode_workspace(
+    name = "acme_ws",
+    out = "acme.code-workspace",
+    folders = {
+        "lib": "lib",
+        "services": "services",
+    },
+    root_label = "acme",
+)
+
+# The "single pane of glass": merge org workspaces under path prefixes.
+vscode_workspace_merge(
+    name = "ecosystem",
+    out = "ecosystem.code-workspace",
+    workspaces = {
+        ":fastverk_ws": "fastverk",
+        ":acme_ws": "acme",
+    },
+)
+
+# Golden tests — the generated artifacts must match the committed goldens.
+diff_test(
+    name = "fastverk_ws_golden_test",
+    file1 = ":fastverk_ws",
+    file2 = "golden/fastverk.code-workspace",
+)
+
+diff_test(
+    name = "ecosystem_golden_test",
+    file1 = ":ecosystem",
+    file2 = "golden/ecosystem.code-workspace",
+)
+
+diff_test(
+    name = "settings_golden_test",
+    file1 = ":settings",
+    file2 = "golden/settings.json",
+)

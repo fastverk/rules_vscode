@@ -1,0 +1,53 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+package(default_visibility = ["//visibility:public"])
+
+bzl_library(
+    name = "providers",
+    srcs = ["providers.bzl"],
+)
+
+bzl_library(
+    name = "folder",
+    srcs = ["folder.bzl"],
+    deps = [":providers"],
+)
+
+bzl_library(
+    name = "settings",
+    srcs = ["settings.bzl"],
+    deps = ["//vscode/private:render"],
+)
+
+bzl_library(
+    name = "workspace",
+    srcs = ["workspace.bzl"],
+    deps = [
+        ":folder",
+        ":providers",
+        "//vscode/private:render",
+        "@aspect_bazel_lib//lib:write_source_files",
+    ],
+)
+
+bzl_library(
+    name = "merge",
+    srcs = ["merge.bzl"],
+    deps = [
+        ":providers",
+        "//vscode/private:render",
+        "@aspect_bazel_lib//lib:write_source_files",
+    ],
+)
+
+bzl_library(
+    name = "defs",
+    srcs = ["defs.bzl"],
+    deps = [
+        ":folder",
+        ":merge",
+        ":providers",
+        ":settings",
+        ":workspace",
+    ],
+)
