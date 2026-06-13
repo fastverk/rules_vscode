@@ -20,6 +20,13 @@ def _vscode_workspace_impl(ctx):
     for path in ctx.attr.folders:
         folder_dicts.append({"path": path, "name": ctx.attr.folders[path]})
 
+    # Per-org worktrees root: a single gitignored folder housing every repo's
+    # git worktrees, surfaced in the workspace so they're one click away. The
+    # rule only adds the folder entry; creating + gitignoring the directory is
+    # an org-root concern (see the org's `.gitignore`).
+    if ctx.attr.worktrees:
+        folder_dicts.append({"path": ctx.attr.worktrees, "name": ctx.attr.worktrees})
+
     settings_list = [json.decode(ctx.attr.settings_json)] if ctx.attr.settings_json else []
     ext_lists = [list(ctx.attr.extensions)] if ctx.attr.extensions else []
 
@@ -49,6 +56,11 @@ _vscode_workspace = rule(
         "out": attr.string(mandatory = True, doc = "Output filename (e.g. `fastverk.code-workspace`)."),
         "root_label": attr.string(doc = "Display name for the implicit `.` folder."),
         "folders": attr.string_dict(doc = "Map of workspace-relative path -> display name."),
+        "worktrees": attr.string(
+            doc = "If set (e.g. `worktrees`), add a workspace-relative folder housing " +
+                  "the org's git worktrees. Only adds the folder to the generated " +
+                  "workspace; the directory itself is created + gitignored at the org root.",
+        ),
         "settings_json": attr.string(doc = "Pre-encoded JSON `settings` block (use the macro)."),
         "extensions": attr.string_list(doc = "Recommended extension ids."),
         "folder_deps": attr.label_list(
@@ -64,6 +76,7 @@ def vscode_workspace(
         out = None,
         root_label = "",
         folders = {},
+        worktrees = "",
         settings = {},
         extensions = [],
         folder_deps = [],
@@ -76,6 +89,9 @@ def vscode_workspace(
       out: output filename; defaults to `<name>.code-workspace`.
       root_label: display name for the implicit `.` folder (the org root).
       folders: dict mapping workspace-relative path -> display name.
+      worktrees: if set (e.g. `worktrees`), add a workspace-relative folder
+        housing the org's git worktrees. Adds the folder to the generated
+        workspace only; the directory is created + gitignored at the org root.
       settings: dict embedded under the workspace `settings` block.
       extensions: list of recommended VSCode extension ids.
       folder_deps: targets whose dep graph contributes `vscode_folder`s.
@@ -91,6 +107,7 @@ def vscode_workspace(
         out = out,
         root_label = root_label,
         folders = folders,
+        worktrees = worktrees,
         settings_json = json.encode(settings) if settings else "",
         extensions = extensions,
         folder_deps = folder_deps,

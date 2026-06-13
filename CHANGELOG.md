@@ -4,6 +4,13 @@ All notable changes to rules_vscode. The format is loosely
 [Keep a Changelog](https://keepachangelog.com/) — version headers
 mirror the published bazel-registry entries.
 
+## 0.0.2
+
+- `vscode_workspace` gains a `worktrees` attr: when set (e.g. `worktrees`), the
+  generated workspace includes a per-org worktrees folder (sorts last) housing
+  every repo's git worktrees. The rule only adds the folder entry; the directory
+  is created + gitignored at the org root.
+
 ## 0.0.1
 
 - Initial public API in `@rules_vscode//vscode:defs.bzl`:

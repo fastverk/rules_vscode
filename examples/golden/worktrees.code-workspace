@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "name": "org",
+      "path": "."
+    },
+    {
+      "name": "app",
+      "path": "repos/app"
+    },
+    {
+      "name": "worktrees",
+      "path": "worktrees"
+    }
+  ]
+}

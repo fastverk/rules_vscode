@@ -59,6 +59,17 @@ vscode_workspace(
     root_label = "acme",
 )
 
+# Demonstrates the `worktrees` attr: a gitignored per-org worktrees root,
+# surfaced in the workspace alongside the repo folders (sorts last).
+vscode_workspace(
+    name = "worktrees_ws",
+    out = "worktrees.code-workspace",
+    folders = {"repos/app": "app"},
+    root_label = "org",
+    worktrees = "worktrees",
+    write_to = "golden/worktrees.code-workspace",
+)
+
 # The "single pane of glass": merge org workspaces under path prefixes.
 vscode_workspace_merge(
     name = "ecosystem",
@@ -86,4 +97,10 @@ diff_test(
     name = "settings_golden_test",
     file1 = ":settings",
     file2 = "golden/settings.json",
+)
+
+diff_test(
+    name = "worktrees_ws_golden_test",
+    file1 = ":worktrees_ws",
+    file2 = "golden/worktrees.code-workspace",
 )

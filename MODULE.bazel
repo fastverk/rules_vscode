@@ -1,7 +1,7 @@
 # Bazel-idiomatic, deterministic generation of VSCode .code-workspace / settings.json (aspect-driven workspace assembly + merge) for fastverk org-roots
 module(
     name = "rules_vscode",
-    version = "0.0.1",
+    version = "0.0.2",
 )
 
 bazel_dep(name = "platforms", version = "1.0.0")
